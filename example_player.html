@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Example HLS Player (use your Vercel proxy)</title>
+</head>
+<body style="background:#111;color:#fff;font-family:sans-serif;display:flex;align-items:center;flex-direction:column;padding:20px;">
+  <h2>Example HLS Player</h2>
+  <video id="player" controls autoplay width="860" style="max-width:95%;border-radius:10px;background:#000;"></video>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    // Replace with your deployed Vercel project domain, e.g.:
+    // const proxyBase = "https://your-project.vercel.app/api/proxy?url=";
+    const proxyBase = "https://YOUR_VERCEL_PROJECT.vercel.app/api/proxy?url=";
+    const m3u8 = "https://nova4k.xyz/live/34409819387648/19127759732731/1470064.m3u8";
+    const streamUrl = proxyBase + encodeURIComponent(m3u8);
+
+    const video = document.getElementById("player");
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(streamUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        video.play();
+      });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = streamUrl;
+      video.addEventListener("loadedmetadata", () => video.play());
+    } else {
+      document.body.insertAdjacentHTML('beforeend','<p>HLS not supported in this browser.</p>');
+    }
+  </script>
+</body>
+</html>
